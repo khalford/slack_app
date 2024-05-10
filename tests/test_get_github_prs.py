@@ -1,4 +1,4 @@
-from get_github_prs import GetGitHubPRs, RepoNotFound, UnknownHTTPError
+from src.get_github_prs import GetGitHubPRs, RepoNotFound, UnknownHTTPError
 from unittest.mock import patch, call
 import pytest
 

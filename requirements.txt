@@ -3,3 +3,4 @@ schedule
 slack-bolt
 aiohttp
 requests
+pytest

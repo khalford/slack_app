@@ -8,7 +8,7 @@ def get_token(secret: str) -> str:
     :param secret: The secret to find
     :return: A secret as string
     """
-    with open("./secrets.json", "r", encoding="utf-8") as file:
+    with open("../secrets.json", "r", encoding="utf-8") as file:
         data = file.read()
     secrets = json.loads(data)
     return secrets[secret]
@@ -20,7 +20,7 @@ def get_repos() -> List[str]:
     This method reads the repo csv file and returns a list of repositories
     :return: List of repositories as strings
     """
-    with open("./repos.csv", "r", encoding="utf-8") as file:
+    with open("../repos.csv", "r", encoding="utf-8") as file:
         data = file.read()
         repos = data.split(",")
         repos = repos[:-1]
@@ -32,7 +32,7 @@ def get_user_map() -> Dict:
     This method gets the GitHub to Slack username mapping from the map file.
     :return: Dictionary of username mapping
     """
-    with open("./user_map.json", "r", encoding="utf-8") as file:
+    with open("../user_map.json", "r", encoding="utf-8") as file:
         data = file.read()
         user_map = json.loads(data)
     return user_map

@@ -1,11 +1,9 @@
 from slack_bolt.app.async_app import AsyncApp
 from slack_bolt.adapter.socket_mode.async_handler import AsyncSocketModeHandler
-from pr_reminder import PostPRsToSlack
-from read_data import get_token
+from src.pr_reminder import PostPRsToSlack
+from src.read_data import get_token
 import logging
 import schedule
-import sys
-
 
 logging.basicConfig(level=logging.DEBUG)
 app = AsyncApp(token=get_token("SLACK_BOT_TOKEN"))
