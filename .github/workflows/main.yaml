@@ -60,4 +60,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: "harbor.stfc.ac.uk/stfc-cloud/cloud_chatops"
+          tags: "harbor.stfc.ac.uk/stfc-cloud/cloud-chatops"
