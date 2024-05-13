@@ -5,3 +5,4 @@ aiohttp
 requests
 pytest
 influxdb-client
+pytest-cov
