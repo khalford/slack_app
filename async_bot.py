@@ -3,6 +3,7 @@ from slack_bolt.adapter.socket_mode.async_handler import AsyncSocketModeHandler
 from src.pr_reminder import PostPRsToSlack
 from src.read_data import get_token
 from src.post_to_influx import PostDataToInflux
+from src.online_notif import online_notif
 import logging
 import schedule
 
@@ -32,10 +33,9 @@ async def schedule_jobs():
     schedule.every().wednesday.at("09:00").do(run_pr, channel="pull-requests")
     schedule.every().friday.at("09:00").do(run_pr, channel="pull-requests")
 
-    schedule.every().monday.at("09:00").do(post_data)
-    schedule.every().wednesday.at("09:00").do(post_data)
-    schedule.every().friday.at("09:00").do(post_data)
+    schedule.every().day.at("09:00").do(post_data)
 
+    online_notif()
     while True:
         schedule.run_pending()
         await asyncio.sleep(10)
