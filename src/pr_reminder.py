@@ -30,6 +30,15 @@ class PostPRsToSlack:
         reminder_message = self.post_reminder_message()
         self.post_thread_messages(self.prs, reminder_message, mention)
 
+    def run_private(self, channel):
+        """
+        This method should send all open PRs to a specific user channel and only send their PRs.
+        :param channel: The chanel/user ID to send to and filter for.
+        """
+        self.CHANNEL = channel
+        reminder_message = self.post_reminder_message()
+        self.post_thread_messages(self.prs, reminder_message, mention=False, private_user=channel)
+
     def post_reminder_message(self) -> WebClient.chat_postMessage:
         """
         This method posts the main reminder message to start the thread if PR notifications.
@@ -46,13 +55,16 @@ class PostPRsToSlack:
         prs: Dict[str, List],
         reminder_message: WebClient.chat_postMessage,
         mention: bool,
+        private_user=None,
     ) -> None:
         """
         This method collates each individual PR reminder message and calls a post method.
+        :param private_user: The user to filter messages for if chosen.
         :param mention: To mention the users or not
         :param prs: A list of PRs from GitHub
         :param reminder_message: The reminder message object
         """
+        private_count = 0
         for repo in prs.values():
             for pr in repo:
                 info = {
@@ -66,7 +78,22 @@ class PostPRsToSlack:
                     "draft": pr["draft"],
                 }
                 checked_info = self.check_pr(info)
-                self.send_thread(**checked_info)
+                if private_user:
+                    if info["user"] == private_user:
+                        private_count += 1
+                        self.send_thread(**checked_info)
+                    else:
+                        pass
+                else:
+                    self.send_thread(**checked_info)
+        if not private_count:
+            self.send_no_prs(reminder_message)
+
+    def send_no_prs(self, reminder: WebClient.chat_postMessage):
+        self.client.chat_postMessage(
+            text="You have no outstanding pull requests open.", channel=reminder.data['channel'], thread_ts=reminder.data['ts'], unfurl_links=False
+        )
+
 
     def check_pr(self, info: Dict) -> Dict:
         if info["user"] not in self.slack_ids:

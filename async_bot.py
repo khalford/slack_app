@@ -15,7 +15,7 @@ app = AsyncApp(token=get_token("SLACK_BOT_TOKEN"))
 async def remind_prs(ack, respond, command):
     async def command_pr(context):
         channel = context["user_id"]
-        PostPRsToSlack().run(channel=channel, mention=None)
+        PostPRsToSlack().run_private(channel=channel)
 
     await ack()
     await respond("Check out your DMs.")
