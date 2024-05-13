@@ -9,8 +9,8 @@ def instance_fixture():
     return GetGitHubPRs(repo_list)
 
 
-@patch("get_github_prs.GetGitHubPRs.format_http_responses")
-@patch("get_github_prs.GetGitHubPRs.request_all_repos_http")
+@patch("src.get_github_prs.GetGitHubPRs.format_http_responses")
+@patch("src.get_github_prs.GetGitHubPRs.request_all_repos_http")
 def test_run(mock_request, mock_format, instance):
     res = instance.run()
     mock_request.assert_called_once()
@@ -18,7 +18,7 @@ def test_run(mock_request, mock_format, instance):
     assert res == mock_format.return_value
 
 
-@patch("get_github_prs.GetGitHubPRs.get_http_response")
+@patch("src.get_github_prs.GetGitHubPRs.get_http_response")
 def test_request_all_repos_http(mock_http, instance):
     mock_http.side_effect = ["response1", "response2"]
     res = instance.request_all_repos_http()
@@ -34,8 +34,8 @@ def test_request_all_repos_http(mock_http, instance):
     }
 
 
-@patch("get_github_prs.requests")
-@patch("get_github_prs.get_token")
+@patch("src.get_github_prs.requests")
+@patch("src.get_github_prs.get_token")
 def test_get_http_response(mock_get_token, mock_requests, instance):
     mock_headers = {"Authorization": "token mock_token"}
     mock_get_token.return_value = "mock_token"

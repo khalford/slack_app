@@ -30,14 +30,16 @@ class PostPRsToSlack:
         reminder_message = self.post_reminder_message()
         self.post_thread_messages(self.prs, reminder_message, mention)
 
-    def run_private(self, channel):
+    def run_private(self, channel) -> None:
         """
         This method should send all open PRs to a specific user channel and only send their PRs.
         :param channel: The chanel/user ID to send to and filter for.
         """
         self.CHANNEL = channel
         reminder_message = self.post_reminder_message()
-        self.post_thread_messages(self.prs, reminder_message, mention=False, private_user=channel)
+        self.post_thread_messages(
+            self.prs, reminder_message, mention=False, private_user=channel
+        )
 
     def post_reminder_message(self) -> WebClient.chat_postMessage:
         """
@@ -89,13 +91,25 @@ class PostPRsToSlack:
         if not private_count:
             self.send_no_prs(reminder_message)
 
-    def send_no_prs(self, reminder: WebClient.chat_postMessage):
+    def send_no_prs(self, reminder: WebClient.chat_postMessage) -> None:
+        """
+        This method sends a message to the user that they have no PRs open.
+        This method is only called if no other PRs have been mentioned.
+        :param reminder: The thread message to send under.
+        """
         self.client.chat_postMessage(
-            text="You have no outstanding pull requests open.", channel=reminder.data['channel'], thread_ts=reminder.data['ts'], unfurl_links=False
+            text="You have no outstanding pull requests open.",
+            channel=reminder.data["channel"],
+            thread_ts=reminder.data["ts"],
+            unfurl_links=False,
         )
 
-
     def check_pr(self, info: Dict) -> Dict:
+        """
+        This method validates certain information in the PR data such as who authored the PR and if it's old or not.
+        :param info: The information to validate.
+        :return: The validated information.
+        """
         if info["user"] not in self.slack_ids:
             info["user"] = "U01JG0LKU3W"
         else:
@@ -119,6 +133,9 @@ class PostPRsToSlack:
         draft=False,
         old=False,
     ) -> None:
+        """
+        This method sends the thread message and prepares the reactions.
+        """
         message = self.construct_message(pr_title, user, url, mention, draft, old)
         response = self.client.chat_postMessage(
             text=message, channel=channel, thread_ts=thread_ts, unfurl_links=False
@@ -131,6 +148,9 @@ class PostPRsToSlack:
         self.send_thread_react(channel, response.data["ts"], reactions)
 
     def send_thread_react(self, channel: str, ts: str, reactions: Dict) -> None:
+        """
+        This method sends reactions to the PR message if necessary.
+        """
         mapping = {
             "old": "alarm_clock",
             "draft": "scroll",
@@ -144,7 +164,10 @@ class PostPRsToSlack:
 
     def construct_message(
         self, pr_title: str, user: str, url: str, mention: bool, draft: bool, old: bool
-    ):
+    ) -> str:
+        """
+        This method constructs the PR message depending on if the PR is old and if the message should mention or not.
+        """
         message = ["", "", "", "", ""]
         if old:
             message[0] = "*This PR is older than 6 months. Consider closing it:*"
