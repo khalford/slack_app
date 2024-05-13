@@ -6,3 +6,5 @@ requests
 pytest
 influxdb-client
 pytest-cov
+pylint
+black

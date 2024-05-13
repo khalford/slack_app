@@ -58,30 +58,40 @@ class PostPRsToSlack:
                 info = {
                     "pr_title": f"{pr['title']} #{pr['number']}",
                     "user": pr["user"]["login"],
-                    "url": pr['html_url'],
-                    "created_at": pr['created_at'],
+                    "url": pr["html_url"],
+                    "created_at": pr["created_at"],
                     "channel": reminder_message.data["channel"],
                     "thread_ts": reminder_message.data["ts"],
                     "mention": mention,
-                    "draft": pr['draft'],
+                    "draft": pr["draft"],
                 }
                 checked_info = self.check_pr(info)
                 self.send_thread(**checked_info)
 
     def check_pr(self, info: Dict) -> Dict:
-        if info['user'] not in self.slack_ids:
-            info['user'] = 'U01JG0LKU3W'
+        if info["user"] not in self.slack_ids:
+            info["user"] = "U01JG0LKU3W"
         else:
-            info['user'] = self.get_username(info['user'])
-        opened_date = datetime.fromisoformat(info['created_at']).replace(tzinfo=None)
+            info["user"] = self.get_username(info["user"])
+        opened_date = datetime.fromisoformat(info["created_at"]).replace(tzinfo=None)
         datetime_now = datetime.now().replace(tzinfo=None)
-        time_cutoff = datetime_now - timedelta(days=30*6)
+        time_cutoff = datetime_now - timedelta(days=30 * 6)
         if opened_date < time_cutoff:
-            info['old'] = True
-        del info['created_at']
+            info["old"] = True
+        del info["created_at"]
         return info
 
-    def send_thread(self, pr_title: str, user: str, url: str, channel: str, thread_ts: str, mention: bool, draft=False, old=False) -> None:
+    def send_thread(
+        self,
+        pr_title: str,
+        user: str,
+        url: str,
+        channel: str,
+        thread_ts: str,
+        mention: bool,
+        draft=False,
+        old=False,
+    ) -> None:
         message = self.construct_message(pr_title, user, url, mention, draft, old)
         response = self.client.chat_postMessage(
             text=message, channel=channel, thread_ts=thread_ts, unfurl_links=False
@@ -91,7 +101,7 @@ class PostPRsToSlack:
             "old": old,
             "draft": draft,
         }
-        self.send_thread_react(channel, response.data['ts'], reactions)
+        self.send_thread_react(channel, response.data["ts"], reactions)
 
     def send_thread_react(self, channel: str, ts: str, reactions: Dict) -> None:
         mapping = {
@@ -100,10 +110,14 @@ class PostPRsToSlack:
         }
         for react in reactions:
             if reactions[react]:
-                react_response = self.client.reactions_add(channel=channel, name=mapping[react], timestamp=ts)
+                react_response = self.client.reactions_add(
+                    channel=channel, name=mapping[react], timestamp=ts
+                )
                 assert react_response["ok"]
 
-    def construct_message(self, pr_title: str, user: str, url: str, mention: bool, draft: bool, old: bool):
+    def construct_message(
+        self, pr_title: str, user: str, url: str, mention: bool, draft: bool, old: bool
+    ):
         message = ["", "", "", "", ""]
         if old:
             message[0] = "*This PR is older than 6 months. Consider closing it:*"
@@ -116,7 +130,7 @@ class PostPRsToSlack:
         for i in message:
             if not i:
                 message.pop(message.index(i))
-        message_construction = '\n'.join(message)
+        message_construction = "\n".join(message)
         return message_construction
 
     def get_real_name(self, username: str) -> str:

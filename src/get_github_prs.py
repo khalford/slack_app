@@ -5,11 +5,13 @@ import requests
 
 class RepoNotFound(Exception):
     """This class creates a custom Exception, so we don't raise "broad" exceptions."""
+
     pass
 
 
 class UnknownHTTPError(Exception):
     """This class creates a custom Exception, so we don't raise "broad" exceptions."""
+
     pass
 
 
@@ -50,7 +52,9 @@ class GetGitHubPRs:
         return response.json()
 
     @staticmethod
-    def format_http_responses(responses: Union[Dict[str, List], Dict[str, Dict]]) -> Dict[str, List]:
+    def format_http_responses(
+        responses: Union[Dict[str, List], Dict[str, Dict]]
+    ) -> Dict[str, List]:
         """
         This method checks if the response returned a list of PRs (where a single repo has multiple PRs)
         or if a response returned a single PR (where a single repo has one PR). Then returns them in a list.
@@ -66,7 +70,9 @@ class GetGitHubPRs:
             elif isinstance(response, list) and response:
                 pass
             else:
-                raise UnknownHTTPError(f"An unexpected HTTP response was found: {response}\n")
+                raise UnknownHTTPError(
+                    f"An unexpected HTTP response was found: {response}\n"
+                )
         for i in to_remove:
             del responses[i]
         return responses
