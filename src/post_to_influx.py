@@ -1,5 +1,5 @@
-from get_github_prs import GetGitHubPRs
-from read_data import get_token, get_repos
+from src.get_github_prs import GetGitHubPRs
+from src.read_data import get_token, get_repos
 from typing import Dict, List
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS

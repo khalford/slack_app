@@ -1,7 +1,7 @@
 from typing import List, Dict
 from datetime import datetime, timedelta
-from read_data import get_token, get_user_map, get_repos
-from get_github_prs import GetGitHubPRs
+from src.read_data import get_token, get_user_map, get_repos
+from src.get_github_prs import GetGitHubPRs
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 

@@ -1,5 +1,5 @@
 from typing import List, Dict, Union
-from read_data import get_token
+from src.read_data import get_token
 import requests
 
 
